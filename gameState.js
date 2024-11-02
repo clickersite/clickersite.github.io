@@ -81,22 +81,6 @@ function addPoints(amount, isCritical = false) {
     checkAchievements();
 }
 
-function createFloatingNumber(amount, isCritical) {
-    const floatingNumber = document.createElement('div');
-    floatingNumber.className = `floating-number ${isCritical ? 'critical-hit' : ''}`;
-    floatingNumber.textContent = `+${amount.toLocaleString()}`;
-    
-    const clickButton = document.getElementById('clickButton');
-    const rect = clickButton.getBoundingClientRect();
-    
-    floatingNumber.style.left = `${rect.left + Math.random() * rect.width}px`;
-    floatingNumber.style.top = `${rect.top + Math.random() * rect.height}px`;
-    
-    document.getElementById('floatingNumbers').appendChild(floatingNumber);
-    
-    setTimeout(() => floatingNumber.remove(), 1000);
-}
-
 function handleClick() {
     const isCritical = Math.random() < (gameState.criticalChance / 100);
     const pointsGained = calculatePoints(isCritical);
@@ -109,8 +93,4 @@ function handleClick() {
     }
     
     triggerRandomEvent();
-}
-
-function updateStatistics() {
-    gameState.statistics.totalTimePlayed = Math.floor((Date.now() - gameState.lastSaveTime) / 1000);
 }

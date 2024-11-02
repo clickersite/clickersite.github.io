@@ -23,7 +23,6 @@ function loadGame() {
         if (savedData) {
             const save = JSON.parse(atob(savedData));
             
-            // Version compatibility check
             if (save.version !== '3.0.0') {
                 convertSaveData(save);
             }

@@ -104,9 +104,6 @@ function calculatePrestigeBonuses() {
         if (upgrade.critMultiplier) {
             gameState.criticalMultiplier += upgrade.critMultiplier * upgrade.owned;
         }
-        if (upgrade.timeMultiplier) {
-            // Implement time warping effect
-        }
     });
     multiplier *= (1 + gameState.prestigeLevel * 0.1);
     gameState.globalMultiplier = multiplier;
@@ -121,37 +118,6 @@ function calculateSuperPrestigeBonuses() {
             if (upgrade.prestigeBonus) {
                 gameState.prestigeTokens *= Math.pow(upgrade.prestigeBonus, upgrade.owned);
             }
-            if (upgrade.autoPrestige && gameState.points >= PRESTIGE_REQUIREMENT) {
-                prestige();
-            }
         }
     });
-}
-
-function showPrestigeAnimation() {
-    const animation = document.createElement('div');
-    animation.className = 'prestige-animation';
-    animation.textContent = 'PRESTIGE!';
-    document.body.appendChild(animation);
-    setTimeout(() => animation.remove(), 2000);
-}
-
-function showSuperPrestigeAnimation() {
-    const animation = document.createElement('div');
-    animation.className = 'super-prestige-animation';
-    animation.textContent = 'SUPER PRESTIGE!';
-    document.body.appendChild(animation);
-    setTimeout(() => animation.remove(), 3000);
-}
-
-function playPrestigeSound() {
-    const audio = new Audio('sounds/prestige.mp3');
-    audio.volume = 0.4;
-    audio.play().catch(() => {});
-}
-
-function playSuperPrestigeSound() {
-    const audio = new Audio('sounds/super-prestige.mp3');
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
 }

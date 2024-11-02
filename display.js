@@ -32,6 +32,29 @@ function updateUpgradesDisplay() {
     });
 }
 
+function updatePrestigeDisplay() {
+    const prestigeLevel = document.getElementById('prestigeLevel');
+    const nextPrestigeBonus = document.getElementById('nextPrestigeBonus');
+    const prestigeButton = document.getElementById('prestigeButton');
+    
+    if (prestigeLevel) prestigeLevel.textContent = formatNumber(gameState.prestigeLevel);
+    if (nextPrestigeBonus) nextPrestigeBonus.textContent = formatNumber(calculatePrestigeBonuses(), 2);
+    
+    if (prestigeButton) {
+        prestigeButton.disabled = gameState.points < PRESTIGE_REQUIREMENT;
+        prestigeButton.innerHTML = `Prestige (Requires ${formatNumber(PRESTIGE_REQUIREMENT)} points)`;
+    }
+
+    const prestigeUpgradesDiv = document.getElementById('prestigeUpgrades');
+    if (prestigeUpgradesDiv) {
+        prestigeUpgradesDiv.innerHTML = '';
+        prestigeUpgrades.forEach(upgrade => {
+            const button = createUpgradeButton(upgrade, 'prestige-upgrade');
+            prestigeUpgradesDiv.appendChild(button);
+        });
+    }
+}
+
 function updateAutoClickersDisplay() {
     const autoClickersDiv = document.getElementById('autoUpgrades');
     autoClickersDiv.innerHTML = '';
@@ -86,21 +109,4 @@ function createFloatingText(text, x, y, color = '#ffffff') {
     setTimeout(() => element.remove(), 1000);
 }
 
-function updateBuffsDisplay() {
-    const buffsDiv = document.getElementById('activeBuffs');
-    buffsDiv.innerHTML = '';
-    
-    gameState.activeBuffs.forEach(buff => {
-        const timeLeft = Math.ceil((buff.endTime - Date.now()) / 1000);
-        const buffElement = document.createElement('div');
-        buffElement.className = 'buff-active';
-        buffElement.innerHTML = `
-            <div class="buff-name">${buff.name}</div>
-            <div class="buff-timer">${timeLeft}s</div>
-        `;
-        buffsDiv.appendChild(buffElement);
-    });
-}
-
-// Update display every 100ms for smooth numbers
 setInterval(updateDisplay, 100);

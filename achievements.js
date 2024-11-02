@@ -66,19 +66,6 @@ function unlockAchievement(achievement) {
     saveGame();
 }
 
-function showAchievementNotification(achievement) {
-    const notification = document.createElement('div');
-    notification.className = 'achievement-notification';
-    notification.innerHTML = `
-        <h3>Achievement Unlocked!</h3>
-        <p>${achievement.name}</p>
-        <p>+${achievement.reward} Achievement Points</p>
-    `;
-    
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
-}
-
 function checkChallenges() {
     challenges.forEach(challenge => {
         if (!challenge.isComplete && challenge.check()) {

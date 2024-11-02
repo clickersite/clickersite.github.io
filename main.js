@@ -1,160 +1,116 @@
-// Initialize game systems
+let initialized = false;
+
 document.addEventListener('DOMContentLoaded', () => {
-    initializeGame();
-    setupEventListeners();
-    initializeParticles();
-    loadGame();
+    if (!initialized) {
+        initializeGame();
+        initialized = true;
+    }
 });
 
 function initializeGame() {
-    // Set up initial game state
-    calculateGlobalMultiplier();
-    updateDisplay();
-    
-    // Start game loops
-    setInterval(() => {
-        processAutoClickers();
-        updateBuffTimers();
-        checkChallenges();
-        updateStatistics();
-    }, 100);
-    
-    // Initialize sound system
-    initializeSoundSystem();
+    setupEventListeners();
+    initializeParticles();
+    loadGame();
+    startGameLoop();
 }
 
 function setupEventListeners() {
-    // Main click button
-    document.getElementById('clickButton').onclick = () => {
-    handleClick();
-    createClickParticles(event);
-};
+    document.getElementById('clickButton').addEventListener('click', (event) => {
+        handleClick();
+        createClickParticles(event);
+    });
 
+    document.getElementById('prestigeButton').addEventListener('click', () => prestige());
+    document.getElementById('superPrestigeButton').addEventListener('click', () => superPrestige());
     
-    // Prestige buttons
-    document.getElementById('prestigeButton').addEventListener('click', prestige);
-    document.getElementById('superPrestigeButton').addEventListener('click', superPrestige);
-    
-    // Save management buttons
-    document.getElementById('exportButton').addEventListener('click', exportSave);
-    document.getElementById('importButton').addEventListener('click', importSave);
-    document.getElementById('resetButton').addEventListener('click', confirmReset);
-    
-    // Keyboard shortcuts
-    document.addEventListener('keydown', handleKeyboardShortcuts);
+    document.getElementById('exportButton').addEventListener('click', () => exportSave());
+    document.getElementById('importButton').addEventListener('click', () => importSave());
+    document.getElementById('resetButton').addEventListener('click', () => confirmReset());
 }
 
-function initializeParticles() {
-    const particleContainer = document.createElement('div');
-    particleContainer.id = 'particleContainer';
-    document.body.appendChild(particleContainer);
+function startGameLoop() {
+    setInterval(() => {
+        processAutoClickers();
+        updateBuffsDisplay();
+        checkChallenges();
+        updateGameTime();
+    }, 100);
+}
+
+function updateGameTime() {
+    gameState.statistics.totalTimePlayed = Math.floor((Date.now() - gameState.lastSaveTime) / 1000);
 }
 
 function createClickParticles(event) {
-    const particles = 10;
-    const colors = ['#FFD700', '#FFA500', '#FF4500'];
+    const particles = [];
+    const numParticles = 10;
     
-    for (let i = 0; i < particles; i++) {
+    for (let i = 0; i < numParticles; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
         
-        const angle = (Math.PI * 2 * i) / particles;
-        const velocity = 2 + Math.random() * 2;
+        const angle = (Math.PI * 2 * i) / numParticles;
+        const velocity = 5 + Math.random() * 5;
         
-        const startX = event.clientX;
-        const startY = event.clientY;
+        const particleData = {
+            element: particle,
+            x: event.clientX,
+            y: event.clientY,
+            vx: Math.cos(angle) * velocity,
+            vy: Math.sin(angle) * velocity,
+            life: 1
+        };
         
-        animateParticle(particle, startX, startY, angle, velocity);
-        document.getElementById('particleContainer').appendChild(particle);
+        particles.push(particleData);
+        document.body.appendChild(particle);
     }
+    
+    animateParticles(particles);
 }
 
-function animateParticle(particle, x, y, angle, velocity) {
-    let posX = x;
-    let posY = y;
-    let life = 1;
-    
-    const animate = () => {
-        if (life <= 0) {
-            particle.remove();
-            return;
+function animateParticles(particles) {
+    function update() {
+        let anyAlive = false;
+        
+        particles.forEach(particle => {
+            if (particle.life > 0) {
+                anyAlive = true;
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.vy += 0.2; // gravity
+                particle.life -= 0.02;
+                
+                particle.element.style.left = particle.x + 'px';
+                particle.element.style.top = particle.y + 'px';
+                particle.element.style.opacity = particle.life;
+            } else if (particle.element.parentNode) {
+                particle.element.remove();
+            }
+        });
+        
+        if (anyAlive) {
+            requestAnimationFrame(update);
         }
-        
-        posX += Math.cos(angle) * velocity;
-        posY += Math.sin(angle) * velocity + 0.5;
-        life -= 0.02;
-        
-        particle.style.left = posX + 'px';
-        particle.style.top = posY + 'px';
-        particle.style.opacity = life;
-        
-        requestAnimationFrame(animate);
-    };
-    
-    requestAnimationFrame(animate);
-}
-
-function handleKeyboardShortcuts(event) {
-    switch(event.key) {
-        case ' ':
-            handleClick();
-            break;
-        case 'p':
-            prestige();
-            break;
-        case 's':
-            saveGame();
-            break;
     }
+    
+    requestAnimationFrame(update);
 }
 
 function confirmReset() {
     if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
-        localStorage.removeItem(SAVE_KEY);
-        location.reload();
+        resetGame();
     }
 }
 
-function initializeSoundSystem() {
-    const sounds = {
-        click: 'click.mp3',
-        prestige: 'prestige.mp3',
-        achievement: 'achievement.mp3',
-        purchase: 'purchase.mp3'
-    };
-    
-    // Preload sounds
-    Object.values(sounds).forEach(sound => {
-        const audio = new Audio(`sounds/${sound}`);
-        audio.preload = 'auto';
-    });
+function resetGame() {
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
 }
 
-function processAutoClickers() {
-    const autoClickPoints = calculateAutoClickerProduction() / 10;
-    if (autoClickPoints > 0) {
-        addPoints(autoClickPoints);
-    }
-}
-
-function updateBuffTimers() {
-    const currentTime = Date.now();
-    gameState.activeBuffs = gameState.activeBuffs.filter(buff => {
-        if (buff.endTime > currentTime) {
-            return true;
-        }
-        if (buff.cleanup) {
-            buff.cleanup();
-        }
-        return false;
-    });
-}
-
-function calculateAutoClickerProduction() {
-    let production = 0;
-    autoClickers.forEach(ac => {
-        production += ac.owned * ac.cps;
-    });
-    return production * calculatePoints();
+function createFloatingNumber(amount, isCritical) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const text = formatNumber(amount);
+    createFloatingText(text, x, y, isCritical ? '#FFD700' : '#ffffff');
 }

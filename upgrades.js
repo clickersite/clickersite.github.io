@@ -60,12 +60,6 @@ function calculateAutoClickerProduction() {
     return production * calculatePoints();
 }
 
-function playPurchaseSound() {
-    const audio = new Audio('sounds/purchase.mp3');
-    audio.volume = 0.3;
-    audio.play().catch(() => {});
-}
-
 function processAutoClickers() {
     const autoClickPoints = calculateAutoClickerProduction() / 10;
     if (autoClickPoints > 0) {
@@ -73,5 +67,4 @@ function processAutoClickers() {
     }
 }
 
-// Auto-clicker interval
 setInterval(processAutoClickers, 100);
