@@ -174,18 +174,14 @@
         <script>
         // Add this to your existing script section
 document.addEventListener('click', (e) => {
-    createParticles(e.clientX, e.clientY);
+    // Get the actual mouse coordinates relative to the viewport
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    createParticles(x, y);
 });
 
 function createParticles(x, y) {
-    // Get the scroll position
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-    
-    // Adjust coordinates to account for scroll position
-    const adjustedX = x + scrollX;
-    const adjustedY = y + scrollY;
-    
     const particleCount = 12;
     
     for (let i = 0; i < particleCount; i++) {
@@ -196,9 +192,10 @@ function createParticles(x, y) {
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        // Use adjusted coordinates
-        particle.style.left = `${adjustedX}px`;
-        particle.style.top = `${adjustedY}px`;
+        // Set position using fixed positioning
+        particle.style.position = 'fixed';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
         
         const angle = (Math.PI * 2 * i) / particleCount;
         const velocity = Math.random() * 3 + 2;
@@ -208,8 +205,8 @@ function createParticles(x, y) {
         document.body.appendChild(particle);
         
         let opacity = 1;
-        let posX = adjustedX;
-        let posY = adjustedY;
+        let posX = x;
+        let posY = y;
         
         function animate() {
             opacity -= 0.025;
