@@ -115,7 +115,7 @@ function init() {
                 
                 // Redirect after fade completes
                 setTimeout(() => {
-                    window.location.href = 'https://clickersite.github.io'; // Replace with actual game URL
+                    window.location.href = 'game.html'; // Replace with actual game URL
                 }, 1500);
             }, { once: true });
         }
