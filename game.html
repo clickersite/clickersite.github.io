@@ -149,6 +149,15 @@
             height: 100%;
             pointer-events: none;
         }
+        .particle {
+    position: absolute;
+    pointer-events: none;
+    background: #00ffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ffff;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
         </style>
     </head>
     <body>
@@ -163,6 +172,60 @@
             <div id="message"></div>
         </div>
         <script>
+        // Add this to your existing script section
+document.addEventListener('click', (e) => {
+    createParticles(e.clientX, e.clientY);
+});
+
+function createParticles(x, y) {
+    const particleCount = 12;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random size between 2 and 6 pixels
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Initial position
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        // Random direction and speed
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const velocity = Math.random() * 3 + 2;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        document.body.appendChild(particle);
+        
+        let opacity = 1;
+        let posX = x;
+        let posY = y;
+        
+        function animate() {
+            opacity -= 0.025;
+            posX += vx;
+            posY += vy;
+            
+            particle.style.opacity = opacity;
+            particle.style.left = `${posX}px`;
+            particle.style.top = `${posY}px`;
+            particle.style.transform = `translate(-50%, -50%) scale(${1 - (1 - opacity) * 0.5})`;
+            
+            if (opacity > 0) {
+                requestAnimationFrame(animate);
+            } else {
+                particle.remove();
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+}
+
             // Initial fade out on load
             window.addEventListener('load', () => {
                 const fadeOverlay = document.getElementById('fadeOverlay');
