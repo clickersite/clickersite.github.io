@@ -1,41 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GamePubV3 Loading</title>
-    <style>
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #000;
-            font-family: 'Arial', sans-serif;
-        }
-        canvas { 
-            display: block; 
-        }
-        #loading-text {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #0ff;
-            font-size: 48px;
-            text-shadow: 0 0 10px #0ff;
-            font-weight: bold;
-        }
-        #progress-text {
-            position: absolute;
-            bottom: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #0ff;
-            font-size: 24px;
-        }
-    </style>
+    <title>GamePubV3 Advanced Loading</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="loading-text">GamePubV3</div>
-    <div id="progress-text">Loading: 0%</div>
-    <canvas id="laserCanvas"></canvas>
-    <script src="loading-screen.js"></script>
+    <div class="quantum-container">
+        <div class="game-title">GamePubV3</div>
+        <div class="press-key">Press any key to start</div>
+        <div class="quantum-loader">
+            <div class="quantum-sphere">
+                <div class="rings"></div>
+                <div class="rings"></div>
+                <div class="rings"></div>
+                <div class="particle-field"></div>
+            </div>
+            <div class="quantum-cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+            <div class="energy-core"></div>
+            <div class="loading-text">Initializing GamePubV3</div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="progress-particles"></div>
+            </div>
+        </div>
+    </div>
+    <script src="loader.js"></script>
 </body>
 </html>

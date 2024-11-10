@@ -2,96 +2,161 @@
     <head>
         <title>GamePub V3</title>
         <style>
-            .Title {
-                font-size: 48px;
-                font-weight: bold;
-                text-align: center;
-                color: #ff0000;
-                animation: rainbowFade 8s linear infinite;
-            }
-            
-            .NumberGame {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-            }
+            body {
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px;
+        }
 
-            .launchng {
-                background-color: red;
-                color: black;
-                margin-top: 5px;
-                margin-bottom: 5px;
-                padding: 10px 20px;
-                cursor: pointer;
-            }
-            
-            .launchng:hover {
-                background-color: black;
-                color: red;
-            }
+        .quantum-background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #000435 0%, #000 100%);
+        }
 
-            .number-buttons {
-                display: none;
-                margin-top: 20px;
-                text-align: center;
-            }
+        .quantum-grid {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: 
+                linear-gradient(transparent 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%),
+                linear-gradient(90deg, transparent 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%);
+            background-size: 50px 50px;
+            transform: rotateX(60deg);
+            animation: gridMove 20s linear infinite;
+        }
 
-            .number-btn {
-                background-color: red;
-                color: black;
-                margin: 5px;
-                padding: 10px 20px;
-                cursor: pointer;
-            }
+        .Title {
+            position: relative;
+            font-size: 64px;
+            font-weight: bold;
+            text-align: center;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-top: 100px;
+            animation: quantumPulse 4s ease-in-out infinite;
+            z-index: 10;
+        }
 
-            .number-btn:hover {
-                background-color: black;
-                color: red;
-            }
+        .NumberGame {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
 
-            #message {
-                margin-top: 20px;
-                font-size: 20px;
-                color: red;
-            }
+        .launchng {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            margin-top: 20px;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
 
-            @keyframes rainbowFade {
-                0% { color: #ff0000; }
-                15% { color: #ff7f00; }
-                30% { color: #ffff00; }
-                45% { color: #00ff00; }
-                60% { color: #0000ff; }
-                75% { color: #4b0082; }
-                90% { color: #8f00ff; }
-                100% { color: #ff0000; }
-            }
-            .fade-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: black;
-                opacity: 1;
-                transition: opacity 1.5s ease-out;
-                z-index: 1000;
-            }
+        .launchng:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
 
-            .fade-out {
-                opacity: 0;
-                pointer-events: none;
-            }
+        .number-buttons {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
 
-            .fade-in {
-                opacity: 1;
-                pointer-events: all;
+        .number-btn {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            margin: 5px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .number-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        #message {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: 1;
+            transition: opacity 1.5s ease-out;
+            z-index: 1000;
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes quantumPulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 20px #00ffff;
             }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 40px #00ffff;
+            }
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: rotateX(60deg) translateY(0);
+            }
+            100% {
+                transform: rotateX(60deg) translateY(50px);
+            }
+        }
+
+        .quantum-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
         </style>
     </head>
     <body>
-        <div class="fade-overlay" id="fadeOverlay"></div>
-        <div class="Title">GamePub V3</div>
+        <div class="quantum-background"></div>
+    <div class="quantum-grid"></div>
+    <div class="quantum-particles"></div>
+    <div class="fade-overlay" id="fadeOverlay"></div>
+    <div class="Title">GamePub V3</div>
         <div class="NumberGame">
             <button class="launchng" onclick="number()">Number Game</button>
             <div id="number-buttons" class="number-buttons"></div>
@@ -155,7 +220,7 @@
 
             window.addEventListener('load', () => {
                 setTimeout(() => {
-                    alert("Successfully loaded GamePubV3!");
+                    console.log('Loaded GamePubV3!')
                 }, 1500);
             });
         </script>
