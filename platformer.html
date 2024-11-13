@@ -89,6 +89,50 @@
     <button class="back-btn" onclick="window.location.href='game.html'">Back</button>
 
     <script>
+    
+    const otherPlayers = new Map();
+let playerId = null;
+const ws = new WebSocket('wss://your-websocket-server.com');
+
+ws.onopen = () => {
+    console.log('Connected to game server');
+};
+
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    
+    switch(data.type) {
+        case 'init':
+            playerId = data.id;
+            data.players.forEach(p => {
+                if (p.id !== playerId) {
+                    otherPlayers.set(p.id, p);
+                }
+            });
+            break;
+            
+        case 'positions':
+            data.players.forEach(([id, pos]) => {
+                if (id !== playerId) {
+                    otherPlayers.set(id, pos);
+                }
+            });
+            break;
+            
+        case 'playerLeft':
+            otherPlayers.delete(data.id);
+            break;
+    }
+};
+
+ws.onerror = (error) => {
+    console.log('WebSocket error:', error);
+};
+
+ws.onclose = () => {
+    console.log('Disconnected from game server');
+};
+    
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -527,6 +571,18 @@ function update() {
     if (!onPlatform && !player.jumping && player.velY > 0) {
         player.jumping = true;
     }
+    if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+        type: 'update',
+        x: player.x,
+        y: player.y,
+        width: player.width,
+        height: player.height,
+        jumping: player.jumping,
+        wallSliding: player.wallSliding,
+        jumpBoostActive: player.jumpBoostActive
+    }));
+}
 }
 
 
@@ -593,6 +649,18 @@ function update() {
             ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
             ctx.fillRect(player.x - 5, player.y, 5, player.height);
         }
+        otherPlayers.forEach((p, id) => {
+    ctx.shadowColor = p.jumpBoostActive ? '#ff00ff' : '#ff6600';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = p.jumpBoostActive ? '#ff00ff' : '#ff6600';
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+    ctx.shadowBlur = 0;
+
+    if (p.wallSliding) {
+        ctx.fillStyle = 'rgba(255, 102, 0, 0.3)';
+        ctx.fillRect(p.x - 5, p.y, 5, p.height);
+    }
+});
     }
 
     function gameLoop() {
