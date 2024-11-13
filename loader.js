@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
         particleField.appendChild(particle);
     }
 
+    const startGame = () => {
+        document.querySelector('.press-key').style.animation = 'fadeOut 0.5s forwards';
+        document.querySelector('.quantum-container').style.animation = 'fadeOut 1s ease-out forwards';
+        setTimeout(() => {
+            window.location.href = 'game.html';
+        }, 1000);
+    };
+
     const interval = setInterval(() => {
         loadProgress += Math.random() * 10;
         if (loadProgress > 100) {
@@ -39,17 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
             textIndex++;
         }
     }, 200);
-});
 
-document.addEventListener('keydown', (event) => {
-    const progress = document.querySelector('.progress');
-    if (progress.style.width === '100%') {
-        document.querySelector('.press-key').style.animation = 'fadeOut 0.5s forwards';
-        document.querySelector('.quantum-container').style.animation = 'fadeOut 1s ease-out forwards';
-        setTimeout(() => {
-            window.location.href = 'game.html';
-        }, 1000);
-    }
+    // Click anywhere to start
+    document.addEventListener('click', () => {
+        if (progress.style.width === '100%') {
+            startGame();
+        }
+    });
 });
 
 // Add fade out keyframes dynamically
