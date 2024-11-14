@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Quantum Platformer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
@@ -90,9 +91,13 @@
 
     <script>
     
+    let currentLevel = 0;
+let levelSeed = 0;
+
+    
     const otherPlayers = new Map();
 let playerId = null;
-const ws = new WebSocket('https://clickersite.github.io/');
+const ws = new WebSocket('wss://complex-caring-nation.glitch.me');
 
 ws.onopen = () => {
     console.log('Connected to game server');
@@ -104,11 +109,21 @@ ws.onmessage = (event) => {
     switch(data.type) {
         case 'init':
             playerId = data.id;
+            currentLevel = data.currentLevel;
+            levelSeed = data.levelSeed;
+            generateNewLevel(levelSeed);
             data.players.forEach(p => {
                 if (p.id !== playerId) {
                     otherPlayers.set(p.id, p);
                 }
             });
+            break;
+            
+        case 'newLevel':
+            currentLevel = data.level;
+            levelSeed = data.seed;
+            generateNewLevel(levelSeed);
+            spawnPlayerOnPlatform();
             break;
             
         case 'positions':
