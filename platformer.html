@@ -112,6 +112,7 @@ ws.onmessage = (event) => {
             currentLevel = data.currentLevel;
             levelSeed = data.levelSeed;
             generateNewLevel(levelSeed);
+            spawnPlayerOnPlatform();
             data.players.forEach(p => {
                 if (p.id !== playerId) {
                     otherPlayers.set(p.id, p);
@@ -139,6 +140,7 @@ ws.onmessage = (event) => {
             break;
     }
 };
+
 
 ws.onerror = (error) => {
     console.log('WebSocket error:', error);
@@ -308,15 +310,17 @@ function spawnPlayerOnPlatform() {
     }
 }
 
-function generateNewLevel() {
-    const newGameState = generateLevelSegment(0);
+function generateNewLevel(seed) {
+    Math.seedrandom(seed);
+    const newGameState = generateLevelSegment(0, seed);
     platforms = newGameState.platforms;
     obstacles = newGameState.obstacles;
     spawnPlayerOnPlatform();
 }
 
 
-    function generateLevelSegment(startX) {
+    function generateLevelSegment(startX, seed) {
+    Math.seedrandom(seed);
     const platforms = [];
     const obstacles = [];
     let currentX = startX;
@@ -480,7 +484,10 @@ function update() {
 
     // Add this check for reaching the right side
     if (player.x + player.width > canvas.width - 50) {
-        generateNewLevel();
+        ws.send(JSON.stringify({
+            type: 'levelComplete',
+            currentLevel: currentLevel
+        }));
         return;
     }
 
